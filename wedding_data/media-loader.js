@@ -20,13 +20,23 @@ class MediaLoader {
 
     /**
      * Initialize media discovery
-     * Attempts to scan directories; falls back to manifest.json if unavailable
+     * For file:// protocol: uses config.js (embedded media list)
+     * For http(s): attempts manifest.json, then falls back to config.js
      */
     async init() {
         console.log('🎬 Initializing MediaLoader...');
         
+        // First, try to use embedded config.js (works with file:// protocol)
+        if (typeof MEDIA_CONFIG !== 'undefined') {
+            console.log('⚙️ Using embedded MEDIA_CONFIG from config.js');
+            this.loadFromConfig();
+            console.log('✅ Media loaded from config:', this.media);
+            return this.media;
+        }
+        
+        // Fallback to manifest.json (for HTTP servers)
+        console.log('📂 MEDIA_CONFIG not found. Trying manifest.json...');
         try {
-            // Try to scan directories via fetch API
             const success = await this.scanDirectories();
             
             if (!success) {
@@ -40,6 +50,30 @@ class MediaLoader {
         
         console.log('✅ Media loaded:', this.media);
         return this.media;
+    }
+
+    /**
+     * Load media from embedded MEDIA_CONFIG
+     */
+    loadFromConfig() {
+        try {
+            if (MEDIA_CONFIG.images && MEDIA_CONFIG.images.length > 0) {
+                this.media.images = MEDIA_CONFIG.images;
+                console.log(`✅ Loaded ${this.media.images.length} images from config`);
+            }
+            
+            if (MEDIA_CONFIG.videos && MEDIA_CONFIG.videos.length > 0) {
+                this.media.videos = MEDIA_CONFIG.videos;
+                console.log(`✅ Loaded ${this.media.videos.length} videos from config`);
+            }
+            
+            if (MEDIA_CONFIG.songs && MEDIA_CONFIG.songs.length > 0) {
+                this.media.songs = MEDIA_CONFIG.songs;
+                console.log(`✅ Loaded ${this.media.songs.length} songs from config`);
+            }
+        } catch (error) {
+            console.error('❌ Error loading from config:', error);
+        }
     }
 
     /**
@@ -176,11 +210,16 @@ class MediaLoader {
     /**
      * Load fallback manifest.json if directory scanning fails
      * Manifest structure: { images: [...], videos: [...], songs: [...] }
+     * 
+     * For file:// protocol users: Helper function to generate manifest.json:
+     * Run this in browser console:
+     * mediaLoader.generateManifestHelper()
      */
     async loadManifest() {
         try {
             console.log('📋 Loading manifest.json...');
-            const response = await fetch('./manifest.json');
+            // Add cache busting parameter to force fresh load
+            const response = await fetch('./manifest.json?v=' + Date.now());
             
             if (!response.ok) {
                 throw new Error('manifest.json not found');
@@ -189,7 +228,7 @@ class MediaLoader {
             const manifest = await response.json();
             
             // Process manifest entries
-            if (manifest.images) {
+            if (manifest.images && manifest.images.length > 0) {
                 this.media.images = manifest.images.map(path => ({
                     path: `./images/${path}`,
                     name: path.replace(/\.[^/.]+$/, ''),
@@ -197,9 +236,10 @@ class MediaLoader {
                     extension: this.getExtension(path),
                     type: 'image'
                 }));
+                console.log(`✅ Loaded ${this.media.images.length} images from manifest`);
             }
             
-            if (manifest.videos) {
+            if (manifest.videos && manifest.videos.length > 0) {
                 this.media.videos = manifest.videos.map(path => ({
                     path: `./videos/${path}`,
                     name: path.replace(/\.[^/.]+$/, ''),
@@ -207,9 +247,10 @@ class MediaLoader {
                     extension: this.getExtension(path),
                     type: 'video'
                 }));
+                console.log(`✅ Loaded ${this.media.videos.length} videos from manifest`);
             }
             
-            if (manifest.songs) {
+            if (manifest.songs && manifest.songs.length > 0) {
                 this.media.songs = manifest.songs.map(path => ({
                     path: `./songs/${path}`,
                     name: path.replace(/\.[^/.]+$/, ''),
@@ -217,13 +258,47 @@ class MediaLoader {
                     extension: this.getExtension(path),
                     type: 'audio'
                 }));
+                console.log(`✅ Loaded ${this.media.songs.length} songs from manifest`);
             }
             
-            console.log('✅ Manifest loaded:', this.media);
+            console.log('✅ Manifest loaded successfully');
         } catch (error) {
-            console.warn('⚠️ Manifest.json not available:', error.message);
-            console.log('📝 No media found. Please ensure media files are in images/, videos/, songs/ folders.');
+            console.warn('⚠️ manifest.json not found:', error.message);
+            console.log('📝 For static file (file://) access, please create manifest.json');
+            console.log('💡 Use mediaLoader.generateManifestHelper() in console to create one');
         }
+    }
+
+    /**
+     * Helper function for users on file:// protocol
+     * Generate manifest.json template based on folder structure
+     * Run in browser console: mediaLoader.generateManifestHelper()
+     */
+    generateManifestHelper() {
+        const manifest = {
+            images: [
+                "sample-1.jpg",
+                "sample-2.jpg",
+                "sample-3.jpg"
+            ],
+            videos: [
+                "sample-video-1.mp4",
+                "sample-video-2.webm"
+            ],
+            songs: [
+                "sample-song-1.mp3",
+                "sample-song-2.ogg"
+            ]
+        };
+        
+        console.log('%c=== MANIFEST.JSON TEMPLATE ===', 'font-size: 14px; font-weight: bold; color: #FF9933;');
+        console.log('%cCopy the JSON below and create a "manifest.json" file in wedding_data/ folder:', 'font-size: 12px; color: #800000;');
+        console.log('%c' + JSON.stringify(manifest, null, 2), 'font-family: monospace; background: #f5f5f5; padding: 10px;');
+        console.log('%cThen list your actual files inside each array:', 'font-size: 12px; color: #800000; margin-top: 10px;');
+        console.log('%cExample: "images": ["photo1.jpg", "photo2.jpg", "subfolder/photo3.jpg"]', 'font-size: 11px; color: #666;');
+        
+        // Also log to alert for visibility
+        alert('Check console (F12) for manifest.json template');
     }
 
     /**

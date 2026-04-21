@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Slideshow - Manifest Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #FFF8E7 0%, #FFFBF0 100%);
+            color: #2C2C2C;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 2px solid #FFD700;
+        }
+        
+        h1 {
+            color: #800000;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .icon {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+        }
+        
+        .section {
+            margin: 2rem 0;
+        }
+        
+        .section h2 {
+            color: #FF9933;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 0.5rem;
+        }
+        
+        .file-input-group {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-left: 4px solid #FF9933;
+            border-radius: 4px;
+        }
+        
+        .file-input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #800000;
+        }
+        
+        input[type="file"] {
+            display: block;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .file-list {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+            border: 1px solid #ddd;
+        }
+        
+        .file-item {
+            padding: 0.5rem;
+            background: #f5f5f5;
+            margin: 0.3rem 0;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-item button {
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .file-item button:hover {
+            background: #FF5252;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid #FFD700;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #800000;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #660000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: #FF9933;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #FF8811;
+            transform: translateY(-2px);
+        }
+        
+        .btn-copy {
+            background: #FF9933;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .output-section {
+            margin-top: 2rem;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 1rem;
+            font-family: monospace;
+            border: 2px solid #FFD700;
+            border-radius: 4px;
+            resize: vertical;
+            font-size: 0.9rem;
+        }
+        
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .message.show {
+            display: block;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .message.info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #FF9933;
+        }
+        
+        .instructions h3 {
+            color: #800000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .instructions ol {
+            margin-left: 1.5rem;
+            line-height: 1.8;
+        }
+        
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="icon">💍</span>Wedding Slideshow - Manifest Generator</h1>
+        
+        <div class="instructions">
+            <h3>📋 How to Use</h3>
+            <ol>
+                <li>Use the file inputs below to select images, videos, and songs from your folders</li>
+                <li>The manifest.json will be generated automatically</li>
+                <li>Copy the JSON from the output box</li>
+                <li>Create a new file named <code>manifest.json</code> in your <code>wedding_data/</code> folder</li>
+                <li>Paste the JSON content and save</li>
+                <li>Open <code>index.html</code> in your browser (no server needed!)</li>
+            </ol>
+        </div>
+        
+        <div id="successMsg" class="message success">
+            ✅ Copied to clipboard! Paste it into your manifest.json file
+        </div>
+        
+        <div id="errorMsg" class="message error"></div>
+        
+        <!-- Images -->
+        <div class="section">
+            <h2><span class="icon">🖼️</span>Images</h2>
+            <div class="file-input-group">
+                <label for="imageInput">Select Image Files (JPG, PNG, GIF)</label>
+                <input type="file" id="imageInput" multiple accept="image/*">
+                <div id="imageList" class="file-list" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Videos -->
+        <div class="section">
+            <h2><span class="icon">🎬</span>Videos</h2>
+            <div class="file-input-group">
+                <label for="videoInput">Select Video Files (MP4, WebM, OGG)</label>
+                <input type="file" id="videoInput" multiple accept="video/*">
+                <div id="videoList" class="file-list" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Songs -->
+        <div class="section">
+            <h2><span class="icon">🎵</span>Songs</h2>
+            <div class="file-input-group">
+                <label for="songInput">Select Audio Files (MP3, OGG, WAV)</label>
+                <input type="file" id="songInput" multiple accept="audio/*">
+                <div id="songList" class="file-list" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn-primary" onclick="generateManifest()">Generate manifest.json</button>
+            <button class="btn-secondary" onclick="clearAll()">Clear All</button>
+        </div>
+        
+        <!-- Output -->
+        <div class="output-section">
+            <h2>📄 Output (manifest.json)</h2>
+            <textarea id="output" placeholder="Your manifest.json will appear here..." readonly></textarea>
+            <button class="btn-copy" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+        </div>
+    </div>
+    
+    <script>
+        const images = [];
+        const videos = [];
+        const songs = [];
+        
+        // File input handlers
+        document.getElementById('imageInput').addEventListener('change', (e) => {
+            images.length = 0;
+            Array.from(e.target.files).forEach(f => images.push(f.name));
+            displayFiles('imageList', images);
+        });
+        
+        document.getElementById('videoInput').addEventListener('change', (e) => {
+            videos.length = 0;
+            Array.from(e.target.files).forEach(f => videos.push(f.name));
+            displayFiles('videoList', videos);
+        });
+        
+        document.getElementById('songInput').addEventListener('change', (e) => {
+            songs.length = 0;
+            Array.from(e.target.files).forEach(f => songs.push(f.name));
+            displayFiles('songList', songs);
+        });
+        
+        function displayFiles(containerId, fileArray) {
+            const container = document.getElementById(containerId);
+            
+            if (fileArray.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            container.innerHTML = fileArray.map((file, idx) => `
+                <div class="file-item">
+                    <span>${file}</span>
+                    <button onclick="removeFile('${containerId}', ${idx})" type="button">Remove</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeFile(containerId, idx) {
+            if (containerId === 'imageList') images.splice(idx, 1);
+            else if (containerId === 'videoList') videos.splice(idx, 1);
+            else if (containerId === 'songList') songs.splice(idx, 1);
+            
+            displayFiles(containerId, 
+                containerId === 'imageList' ? images : 
+                containerId === 'videoList' ? videos : 
+                songs
+            );
+        }
+        
+        function generateManifest() {
+            if (images.length === 0 && videos.length === 0 && songs.length === 0) {
+                showError('❌ Please select at least one file!');
+                return;
+            }
+            
+            const manifest = {
+                images: images,
+                videos: videos,
+                songs: songs
+            };
+            
+            document.getElementById('output').value = JSON.stringify(manifest, null, 2);
+            document.getElementById('errorMsg').classList.remove('show');
+        }
+        
+        function copyToClipboard() {
+            const textarea = document.getElementById('output');
+            if (textarea.value === '') {
+                showError('❌ Please generate manifest first!');
+                return;
+            }
+            
+            textarea.select();
+            document.execCommand('copy');
+            
+            const msg = document.getElementById('successMsg');
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+        }
+        
+        function clearAll() {
+            images.length = 0;
+            videos.length = 0;
+            songs.length = 0;
+            
+            document.getElementById('imageInput').value = '';
+            document.getElementById('videoInput').value = '';
+            document.getElementById('songInput').value = '';
+            document.getElementById('output').value = '';
+            
+            document.getElementById('imageList').style.display = 'none';
+            document.getElementById('videoList').style.display = 'none';
+            document.getElementById('songList').style.display = 'none';
+        }
+        
+        function showError(msg) {
+            const errorEl = document.getElementById('errorMsg');
+            errorEl.textContent = msg;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 4000);
+        }
+    </script>
+</body>
+</html>

@@ -1,15 +1,20 @@
 {
     "images": [
-        "sample-photo-1.jpg",
-        "sample-photo-2.jpg",
-        "sample-photo-3.jpg"
+        "DSC_1370.jpeg",
+        "DSC_1372.jpeg",
+        "DSC_1380.jpeg",
+        "DSC_1397.jpeg",
+        "DSC_1399.jpeg",
+        "DSC_1404.jpeg"
     ],
     "videos": [
-        "sample-video-1.mp4",
-        "sample-video-2.webm"
+        "Green Decorative Wedding Invitation Mobile Video (1).mp4",
+        "Green Decorative Wedding Invitation Mobile Video (2).mp4",
+        "Green Decorative Wedding Invitation Mobile Video (3).mp4"
     ],
     "songs": [
-        "sample-song-1.mp3",
-        "sample-song-2.ogg"
+        "01 - Kalyanam Vybhogam - SenSongsMp3.Co.mp3",
+        "Vishnusahasranamam with Telugu Lyrics  DEVOTIONAL STOTRAS  BHAKTHI LYRICS - THE DIVINE - DEVOTIONAL LYRICS.mp3"
     ]
 }
+

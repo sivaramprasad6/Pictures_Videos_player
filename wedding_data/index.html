@@ -34,6 +34,7 @@
                     <div class="image-wrapper">
                         <img id="currentImage" src="" alt="Wedding slideshow image" class="slideshow-image">
                         <div id="imageCaption" class="image-caption" aria-live="polite"></div>
+                        <button id="fullscreenImageBtn" class="fullscreen-btn" aria-label="View fullscreen" title="Fullscreen (F)">⛶</button>
                     </div>
                     <div class="image-counter" aria-live="polite">
                         <span id="currentImageIndex">0</span> / <span id="totalImages">0</span>
@@ -132,9 +133,19 @@
         </aside>
     </div>
 
+    <!-- Fullscreen Image Modal -->
+    <div id="fullscreenImageModal" class="fullscreen-image-modal hidden" role="dialog" aria-label="Fullscreen Image Viewer">
+        <button id="fullscreenImageCloseBtn" class="fullscreen-close-btn" aria-label="Close fullscreen">✕</button>
+        <div class="fullscreen-image-container">
+            <img id="fullscreenImageContent" src="" alt="Fullscreen image" class="fullscreen-image">
+            <div id="fullscreenImageCaption" class="fullscreen-image-info" aria-live="polite"></div>
+        </div>
+    </div>
+
     <!-- Video Player Overlay -->
     <div id="videoOverlay" class="video-overlay hidden" role="dialog" aria-label="Video Player">
         <button id="closeVideoBtn" class="close-video-btn" aria-label="Close video player">✕</button>
+        <button id="fullscreenVideoBtn" class="fullscreen-video-btn" aria-label="Fullscreen video" title="Fullscreen (F)">⛶</button>
         <div class="video-player-container">
             <video id="videoPlayer" class="video-player" controls aria-label="Video player">
                 Your browser does not support the video tag.
@@ -146,6 +157,7 @@
     <div id="loadingIndicator" class="loading-indicator" role="status" aria-label="Loading media"></div>
 
     <!-- Scripts -->
+    <script src="config.js"></script>
     <script src="media-loader.js"></script>
     <script src="app.js"></script>
 </body>

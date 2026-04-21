@@ -30,6 +30,8 @@ class AppState {
         
         // Video state
         this.currentVideoIndex = 0;
+        this.wasImagePlayingBeforeVideo = false; // Track if we need to resume
+        this.wasSongPlayingBeforeVideo = false; // Track if we need to resume
         
         // UI state
         this.isWelcomeScreenActive = true;
@@ -102,6 +104,11 @@ class WeddingSlideshow {
         this.loopBtn = document.getElementById('loopBtn');
         this.imageSlideshowSection = document.getElementById('imageSlideshowSection');
         this.noImagesMsg = document.getElementById('noImagesMsg');
+        this.fullscreenImageBtn = document.getElementById('fullscreenImageBtn');
+        this.fullscreenImageModal = document.getElementById('fullscreenImageModal');
+        this.fullscreenImageCloseBtn = document.getElementById('fullscreenImageCloseBtn');
+        this.fullscreenImageContent = document.getElementById('fullscreenImageContent');
+        this.fullscreenImageCaption = document.getElementById('fullscreenImageCaption');
         
         // Audio elements
         this.audioPlayer = document.getElementById('audioPlayer');
@@ -124,6 +131,7 @@ class WeddingSlideshow {
         this.videoPlayer = document.getElementById('videoPlayer');
         this.videoOverlay = document.getElementById('videoOverlay');
         this.closeVideoBtn = document.getElementById('closeVideoBtn');
+        this.fullscreenVideoBtn = document.getElementById('fullscreenVideoBtn');
         this.videoList = document.getElementById('videoList');
         this.videoSection = document.getElementById('videoSection');
         this.noVideosMsg = document.getElementById('noVideosMsg');
@@ -175,6 +183,7 @@ class WeddingSlideshow {
         this.nextBtn.addEventListener('click', () => this.nextImage());
         this.shuffleBtn.addEventListener('click', () => this.toggleImageShuffle());
         this.loopBtn.addEventListener('click', () => this.toggleImageLoop());
+        this.fullscreenImageBtn.addEventListener('click', () => this.toggleFullscreenImage());
         
         // Duration controls
         this.durationSelect.addEventListener('change', (e) => this.changeDuration(e));
@@ -197,6 +206,7 @@ class WeddingSlideshow {
         
         // Video controls
         this.closeVideoBtn.addEventListener('click', () => this.closeVideo());
+        this.fullscreenVideoBtn.addEventListener('click', () => this.toggleFullscreenVideo());
         this.videoPlayer.addEventListener('ended', () => this.onVideoEnded());
         
         // Keyboard shortcuts
@@ -206,6 +216,14 @@ class WeddingSlideshow {
         this.videoOverlay.addEventListener('click', (e) => {
             if (e.target === this.videoOverlay) {
                 this.closeVideo();
+            }
+        });
+        
+        // Fullscreen image modal
+        this.fullscreenImageCloseBtn.addEventListener('click', () => this.closeFullscreenImage());
+        this.fullscreenImageModal.addEventListener('click', (e) => {
+            if (e.target === this.fullscreenImageModal) {
+                this.closeFullscreenImage();
             }
         });
     }
@@ -233,7 +251,7 @@ class WeddingSlideshow {
             this.songSection.style.display = 'none';
         }
         
-        // Populate video list
+        // Populate video list with thumbnails
         if (this.state.media.videos.length > 0) {
             this.noVideosMsg.classList.add('hidden');
             this.videoList.innerHTML = '';
@@ -241,11 +259,39 @@ class WeddingSlideshow {
             this.state.media.videos.forEach((video, index) => {
                 const div = document.createElement('div');
                 div.className = 'video-item';
-                div.textContent = video.name;
                 div.setAttribute('data-index', index);
                 div.setAttribute('role', 'option');
                 div.addEventListener('click', () => this.playVideoByIndex(index));
+                
+                // Create thumbnail container
+                const thumbnailContainer = document.createElement('div');
+                thumbnailContainer.className = 'video-thumbnail-container';
+                
+                // Add thumbnail image (will be loaded asynchronously)
+                const thumbnail = document.createElement('img');
+                thumbnail.className = 'video-thumbnail';
+                thumbnail.alt = `${video.name} thumbnail`;
+                
+                // Try to generate thumbnail from video
+                this.generateVideoThumbnail(video.path, thumbnail);
+                
+                // Add play icon overlay
+                const playIcon = document.createElement('div');
+                playIcon.className = 'video-play-icon';
+                playIcon.textContent = '▶';
+                
+                thumbnailContainer.appendChild(thumbnail);
+                thumbnailContainer.appendChild(playIcon);
+                div.appendChild(thumbnailContainer);
+                
+                // Add video name
+                const name = document.createElement('div');
+                name.className = 'video-name';
+                name.textContent = video.name;
+                div.appendChild(name);
+                
                 this.videoList.appendChild(div);
+                console.log(`📹 Video item created: ${video.name} (${video.path})`);
             });
         } else {
             this.noVideosMsg.classList.remove('hidden');
@@ -253,6 +299,91 @@ class WeddingSlideshow {
         
         // Update image counter
         this.totalImages.textContent = this.state.media.images.length;
+    }
+    
+    /**
+     * Generate thumbnail from video file
+     * @param {string} videoPath - Path to video file
+     * @param {HTMLImageElement} imgElement - Image element to set thumbnail to
+     */
+    generateVideoThumbnail(videoPath, imgElement) {
+        const video = document.createElement('video');
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let thumbnailGenerated = false;
+        
+        video.addEventListener('loadedmetadata', () => {
+            // Seek to 1 second or 25% of video length (whichever is smaller)
+            const seekTime = Math.min(1, video.duration * 0.25);
+            console.log(`📹 Generating thumbnail for ${videoPath} at ${seekTime}s`);
+            video.currentTime = seekTime;
+        }, { once: true });
+        
+        video.addEventListener('seeked', () => {
+            if (!thumbnailGenerated && video.readyState >= 2) {
+                try {
+                    thumbnailGenerated = true;
+                    canvas.width = video.videoWidth || 320;
+                    canvas.height = video.videoHeight || 180;
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    imgElement.src = canvas.toDataURL('image/png');
+                    console.log(`✅ Thumbnail generated for ${videoPath}`);
+                } catch (e) {
+                    console.warn(`⚠️ Could not draw canvas for ${videoPath}:`, e);
+                    this.setVideoPlaceholder(imgElement);
+                }
+            }
+        }, { once: true });
+        
+        video.addEventListener('error', (e) => {
+            console.warn(`⚠️ Could not load video ${videoPath}:`, e);
+            this.setVideoPlaceholder(imgElement);
+        }, { once: true });
+        
+        video.addEventListener('canplay', () => {
+            if (!thumbnailGenerated) {
+                try {
+                    thumbnailGenerated = true;
+                    canvas.width = video.videoWidth || 320;
+                    canvas.height = video.videoHeight || 180;
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    imgElement.src = canvas.toDataURL('image/png');
+                    console.log(`✅ Thumbnail generated for ${videoPath} (canplay)`);
+                } catch (e) {
+                    console.warn(`⚠️ Could not draw on canplay for ${videoPath}:`, e);
+                    this.setVideoPlaceholder(imgElement);
+                }
+            }
+        }, { once: true });
+        
+        // Add crossorigin attribute for CORS
+        video.crossOrigin = 'anonymous';
+        video.src = videoPath;
+        video.load();
+    }
+
+    /**
+     * Set video placeholder when thumbnail generation fails
+     * @param {HTMLImageElement} imgElement - Image element
+     */
+    setVideoPlaceholder(imgElement) {
+        // Create a nice placeholder SVG with play button
+        const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180">
+                <defs>
+                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#660000;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#330000;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <rect fill="url(#grad)" width="320" height="180"/>
+                <circle cx="160" cy="90" r="45" fill="rgba(255,153,51,0.8)"/>
+                <polygon points="145,70 145,110 185,90" fill="white"/>
+            </svg>
+        `;
+        imgElement.src = 'data:image/svg+xml;base64,' + btoa(svg);
+        console.log(`📹 Using placeholder for video thumbnail`);
     }
 
     /**
@@ -325,6 +456,11 @@ class WeddingSlideshow {
         const caption = await mediaLoader.loadCaption(image.path);
         this.imageCaption.textContent = caption || image.name;
         
+        // Update fullscreen image if it's open
+        if (!this.fullscreenImageModal.classList.contains('hidden')) {
+            this.updateFullscreenImage();
+        }
+        
         // Preload next image
         this.preloadNextImage();
     }
@@ -350,8 +486,18 @@ class WeddingSlideshow {
         
         if (this.state.isImagePlaying) {
             this.startAutoAdvance();
+            // Auto-start songs when images start playing
+            if (this.state.media.songs.length > 0 && !this.state.isSongPlaying) {
+                this.toggleSongPlayback();
+            }
         } else {
             this.stopAutoAdvance();
+            // Pause songs when pausing images
+            if (this.state.isSongPlaying) {
+                this.audioPlayer.pause();
+                this.state.isSongPlaying = false;
+                this.updateSongPlayPauseButton();
+            }
         }
     }
 
@@ -741,9 +887,27 @@ class WeddingSlideshow {
         this.state.currentVideoIndex = index;
         const video = this.state.media.videos[index];
         
-        // Pause slideshow
+        // Save state before stopping
+        this.state.wasImagePlayingBeforeVideo = this.state.isImagePlaying;
+        this.state.wasSongPlayingBeforeVideo = this.state.isSongPlaying;
+        
+        // Stop slideshow
         if (this.state.isImagePlaying) {
-            this.toggleImagePlayback();
+            this.state.isImagePlaying = false;
+            this.stopAutoAdvance();
+            this.updatePlayPauseButton();
+        }
+        
+        // Stop songs
+        if (this.state.isSongPlaying) {
+            this.audioPlayer.pause();
+            this.state.isSongPlaying = false;
+            this.updateSongPlayPauseButton();
+        }
+        
+        // Close fullscreen image if open
+        if (!this.fullscreenImageModal.classList.contains('hidden')) {
+            this.closeFullscreenImage();
         }
         
         // Load and play video
@@ -766,8 +930,72 @@ class WeddingSlideshow {
      */
     onVideoEnded() {
         this.closeVideo();
-        // Resume slideshow if it was playing
-        // (optional - can be configured in settings)
+        
+        // Resume slideshow and songs if they were playing before video
+        if (this.state.wasImagePlayingBeforeVideo) {
+            this.state.isImagePlaying = true;
+            this.updatePlayPauseButton();
+            this.startAutoAdvance();
+        }
+        
+        if (this.state.wasSongPlayingBeforeVideo) {
+            this.audioPlayer.play().catch(error => console.warn('⚠️ Audio resume failed:', error));
+            this.state.isSongPlaying = true;
+            this.updateSongPlayPauseButton();
+        }
+    }
+
+    // ============================================
+    // FULLSCREEN FUNCTIONS
+    // ============================================
+
+    /**
+     * Toggle fullscreen for current image
+     */
+    toggleFullscreenImage() {
+        if (this.state.media.images.length === 0) return;
+        
+        const actualIndex = this.state.isImageShuffled 
+            ? this.state.imageOrder[this.state.currentImageIndex] 
+            : this.state.currentImageIndex;
+        const image = this.state.media.images[actualIndex];
+        
+        this.fullscreenImageContent.src = image.path;
+        this.fullscreenImageContent.alt = image.name;
+        this.fullscreenImageCaption.textContent = image.name;
+        
+        this.fullscreenImageModal.classList.remove('hidden');
+        this.fullscreenImageModal.classList.add('active');
+        
+        // Keep slideshow running during fullscreen
+        console.log('🖼️ Fullscreen image opened');
+    }
+
+    /**
+     * Close fullscreen image
+     */
+    closeFullscreenImage() {
+        this.fullscreenImageModal.classList.add('hidden');
+        this.fullscreenImageModal.classList.remove('active');
+        console.log('🖼️ Fullscreen image closed');
+    }
+
+    /**
+     * Toggle fullscreen for video using Fullscreen API
+     */
+    async toggleFullscreenVideo() {
+        try {
+            if (document.fullscreenElement) {
+                // Exit fullscreen
+                await document.exitFullscreen();
+            } else {
+                // Enter fullscreen
+                await this.videoPlayer.requestFullscreen();
+            }
+        } catch (error) {
+            console.warn('⚠️ Fullscreen not available:', error);
+            // Fallback: Let native video controls handle it
+        }
     }
 
     // ============================================
@@ -781,6 +1009,17 @@ class WeddingSlideshow {
     handleKeyboardShortcuts(e) {
         if (this.state.isWelcomeScreenActive) return;
         
+        // Allow Escape key to close fullscreen
+        if (e.code === 'Escape') {
+            if (!this.fullscreenImageModal.classList.contains('hidden')) {
+                this.closeFullscreenImage();
+            }
+            return;
+        }
+        
+        // Handle navigation in fullscreen
+        const isFullscreenActive = !this.fullscreenImageModal.classList.contains('hidden');
+        
         switch(e.code) {
             case 'Space':
                 e.preventDefault();
@@ -788,9 +1027,17 @@ class WeddingSlideshow {
                 break;
             case 'ArrowRight':
                 this.nextImage();
+                if (isFullscreenActive) {
+                    // Update fullscreen image when navigating
+                    setTimeout(() => this.updateFullscreenImage(), 0);
+                }
                 break;
             case 'ArrowLeft':
                 this.previousImage();
+                if (isFullscreenActive) {
+                    // Update fullscreen image when navigating
+                    setTimeout(() => this.updateFullscreenImage(), 0);
+                }
                 break;
             case 'KeyL':
                 this.toggleImageLoop();
@@ -804,7 +1051,32 @@ class WeddingSlideshow {
             case 'KeyR':
                 this.toggleRepeatMode();
                 break;
+            case 'KeyF':
+                e.preventDefault();
+                // Toggle fullscreen based on what's currently visible
+                if (!this.videoOverlay.classList.contains('hidden')) {
+                    this.toggleFullscreenVideo();
+                } else {
+                    this.toggleFullscreenImage();
+                }
+                break;
         }
+    }
+    
+    /**
+     * Update fullscreen image to match current slideshow image
+     */
+    updateFullscreenImage() {
+        if (this.state.media.images.length === 0) return;
+        
+        const actualIndex = this.state.isImageShuffled 
+            ? this.state.imageOrder[this.state.currentImageIndex] 
+            : this.state.currentImageIndex;
+        const image = this.state.media.images[actualIndex];
+        
+        this.fullscreenImageContent.src = image.path;
+        this.fullscreenImageContent.alt = image.name;
+        this.fullscreenImageCaption.textContent = image.name;
     }
 }
 
