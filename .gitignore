@@ -1,0 +1,152 @@
+# ============================================
+# Wedding Slideshow - Media Files (GITIGNORE)
+# ============================================
+
+# Media folders - Users add their own files here
+wedding_data/images/
+wedding_data/videos/
+wedding_data/songs/
+
+# Planning files
+plan.md
+*.plan
+*.todo
+
+# ============================================
+# Node.js & npm
+# ============================================
+node_modules/
+npm-debug.log
+npm-debug.log.*
+yarn-error.log
+yarn-debug.log*
+package-lock.json
+yarn.lock
+.npm
+.eslintcache
+.node_repl_history
+
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ============================================
+# IDE & Editor
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.vim/
+.netrwhist
+
+# ============================================
+# OS Specific
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.lnk
+desktop.ini
+
+# ============================================
+# Build & Logs
+# ============================================
+dist/
+build/
+*.log
+*.logs
+.cache/
+.tmp/
+tmp/
+out/
+
+# ============================================
+# Testing
+# ============================================
+.coverage
+htmlcov/
+.pytest_cache/
+.mocha.opts
+coverage/
+*.lcov
+
+# ============================================
+# Environment Variables
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# ============================================
+# Temporary Files
+# ============================================
+*.tmp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# ============================================
+# Local Development
+# ============================================
+local_config.js
+local_config.json
+debug.log
+server.log
+.vscode-server/
+
+# ============================================
+# Generated Files (Optional)
+# ============================================
+# Uncomment if you generate static files:
+# dist/
+# build/
+# public/
+
+# ============================================
+# Documentation (Optional)
+# ============================================
+# If you auto-generate docs, add here:
+# docs/generated/
+# api-docs/

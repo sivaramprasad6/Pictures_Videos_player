@@ -1,0 +1,811 @@
+/* ============================================
+   Hindu Wedding Slideshow - Styles
+   Responsive, Accessible, Hindu Wedding Theme
+   ============================================ */
+
+/* CSS Variables - Theme Colors & Typography */
+:root {
+    /* Wedding Colors */
+    --color-saffron: #FF9933;
+    --color-maroon: #800000;
+    --color-gold: #FFD700;
+    --color-cream: #FFF8E7;
+    --color-warm-white: #FFFBF0;
+    --color-dark-maroon: #660000;
+    
+    /* Text Colors */
+    --color-text-dark: #2C2C2C;
+    --color-text-light: #F5F5F5;
+    --color-border: #D4AF37;
+    
+    /* Typography */
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Timing */
+    --transition-default: 300ms ease-in-out;
+    --transition-fade: 500ms ease-in-out;
+}
+
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-warm-white) 100%);
+    color: var(--color-text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Accessibility: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ============================================
+   WELCOME SCREEN
+   ============================================ */
+
+.welcome-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--color-maroon) 0%, var(--color-dark-maroon) 100%);
+    opacity: 1;
+    transition: opacity var(--transition-fade);
+}
+
+.welcome-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.welcome-container {
+    text-align: center;
+    color: var(--color-cream);
+    animation: welcomeFadeIn 1s ease-in-out;
+}
+
+@keyframes welcomeFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.welcome-icon {
+    font-size: 5rem;
+    margin-bottom: var(--spacing-lg);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.welcome-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-saffron);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-couple {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    margin-bottom: var(--spacing-xl);
+    color: var(--color-gold);
+    font-style: italic;
+}
+
+.btn-start {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    padding: 1rem 3rem;
+    background: var(--color-saffron);
+    color: var(--color-text-dark);
+    border: 3px solid var(--color-gold);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all var(--transition-default);
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-start:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    background: var(--color-gold);
+}
+
+.btn-start:active {
+    transform: translateY(-1px);
+}
+
+.btn-start:focus {
+    outline: 3px solid var(--color-cream);
+    outline-offset: 4px;
+}
+
+/* ============================================
+   MAIN SLIDESHOW LAYOUT
+   ============================================ */
+
+.slideshow-wrapper {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 300px;
+    min-height: 100vh;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    opacity: 1;
+    transition: opacity var(--transition-fade);
+}
+
+.slideshow-wrapper.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+/* Header spans full width */
+.slideshow-wrapper .wedding-header {
+    grid-column: 1 / -1;
+}
+
+/* Main content area */
+.slideshow-wrapper .slideshow-main {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+/* Sidebar */
+.slideshow-wrapper .sidebar {
+    grid-column: 2;
+    grid-row: 2;
+    overflow-y: auto;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.wedding-header {
+    background: linear-gradient(90deg, var(--color-maroon), var(--color-dark-maroon));
+    padding: var(--spacing-lg);
+    border-bottom: 4px solid var(--color-gold);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+}
+
+.header-icon {
+    font-size: 2.5rem;
+}
+
+.header-title {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    color: var(--color-saffron);
+    margin: 0;
+}
+
+/* ============================================
+   SLIDESHOW SECTION
+   ============================================ */
+
+.slideshow-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.8);
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    border: 2px solid var(--color-gold);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slideshow-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    animation: fadeIn var(--transition-fade) forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--color-text-light);
+    padding: var(--spacing-sm);
+    font-size: 0.9rem;
+    text-align: center;
+    font-style: italic;
+}
+
+.image-counter {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--color-text-dark);
+    font-weight: 600;
+}
+
+/* ============================================
+   CONTROLS
+   ============================================ */
+
+.slideshow-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.control-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.control-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+
+.duration-select,
+.custom-duration {
+    padding: 0.5rem;
+    border: 2px solid var(--color-border);
+    border-radius: 4px;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    background: white;
+    color: var(--color-text-dark);
+    cursor: pointer;
+}
+
+.duration-select:focus,
+.custom-duration:focus {
+    outline: 3px solid var(--color-saffron);
+    outline-offset: 2px;
+}
+
+.custom-duration.hidden {
+    display: none;
+}
+
+/* Buttons */
+.control-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--color-maroon);
+    color: white;
+    border: 2px solid var(--color-gold);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-default);
+    font-family: var(--font-sans);
+}
+
+.control-btn:hover {
+    background: var(--color-dark-maroon);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+.control-btn:focus {
+    outline: 3px solid var(--color-saffron);
+    outline-offset: 2px;
+}
+
+.control-btn.small {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* Pressed/Active state for toggle buttons */
+.control-btn[aria-pressed="true"] {
+    background: var(--color-saffron);
+    color: var(--color-text-dark);
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+
+.sidebar {
+    background: rgba(255, 255, 255, 0.9);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    border: 2px solid var(--color-gold);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.sidebar-title {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    color: var(--color-maroon);
+    border-bottom: 2px solid var(--color-gold);
+    padding-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* ============================================
+   AUDIO PLAYER
+   ============================================ */
+
+.song-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    background: #f9f9f9;
+    padding: var(--spacing-sm);
+    border-radius: 4px;
+    border-left: 4px solid var(--color-saffron);
+}
+
+.song-title {
+    font-weight: 600;
+    color: var(--color-maroon);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.song-time {
+    font-size: 0.8rem;
+    color: var(--color-text-dark);
+}
+
+.song-progress-container {
+    width: 100%;
+}
+
+.song-progress {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    accent-color: var(--color-saffron);
+}
+
+.song-progress:focus {
+    outline: 2px solid var(--color-saffron);
+    outline-offset: 2px;
+}
+
+.song-controls,
+.song-advanced-controls {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.volume-slider {
+    flex: 1;
+    height: 6px;
+    cursor: pointer;
+    accent-color: var(--color-saffron);
+}
+
+.volume-slider:focus {
+    outline: 2px solid var(--color-saffron);
+    outline-offset: 2px;
+}
+
+/* Song/Video Lists */
+.song-list,
+.video-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.song-item,
+.video-item {
+    padding: var(--spacing-sm);
+    background: #f5f5f5;
+    border-left: 4px solid var(--color-gold);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all var(--transition-default);
+    font-size: 0.9rem;
+    color: var(--color-text-dark);
+}
+
+.song-item:hover,
+.video-item:hover {
+    background: #efefef;
+    transform: translateX(4px);
+}
+
+.song-item.active {
+    background: var(--color-saffron);
+    color: var(--color-text-dark);
+    font-weight: 600;
+    border-left-color: var(--color-maroon);
+}
+
+.song-item:focus,
+.video-item:focus {
+    outline: 2px solid var(--color-maroon);
+    outline-offset: -2px;
+}
+
+/* ============================================
+   MESSAGE BOXES
+   ============================================ */
+
+.message-box {
+    padding: var(--spacing-md);
+    background: #fff3cd;
+    border-left: 4px solid var(--color-saffron);
+    border-radius: 4px;
+    color: var(--color-text-dark);
+    font-size: 0.9rem;
+    display: block;
+}
+
+.message-box.hidden {
+    display: none;
+}
+
+.message-box code {
+    background: #ffeaa7;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+/* ============================================
+   VIDEO OVERLAY
+   ============================================ */
+
+.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity var(--transition-default);
+}
+
+.video-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.video-player-container {
+    position: relative;
+    width: 90%;
+    max-width: 900px;
+    aspect-ratio: 16 / 9;
+}
+
+.video-player {
+    width: 100%;
+    height: 100%;
+    background: black;
+}
+
+.close-video-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-default);
+    z-index: 1001;
+}
+
+.close-video-btn:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.close-video-btn:focus {
+    outline: 3px solid var(--color-saffron);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   LOADING INDICATOR
+   ============================================ */
+
+.loading-indicator {
+    display: none;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--color-gold);
+    border-top-color: var(--color-saffron);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 999;
+}
+
+.loading-indicator.active {
+    display: block;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablets (768px - 1023px) */
+@media (max-width: 1023px) {
+    .slideshow-wrapper {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm);
+    }
+    
+    .slideshow-wrapper .sidebar {
+        grid-column: 1;
+        grid-row: auto;
+        max-height: 300px;
+    }
+    
+    .header-title {
+        font-size: 1.5rem;
+    }
+    
+    .slideshow-image {
+        aspect-ratio: 16 / 9;
+    }
+}
+
+/* Mobile (up to 767px) */
+@media (max-width: 767px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .slideshow-wrapper {
+        grid-template-columns: 1fr;
+        padding: var(--spacing-sm);
+        gap: var(--spacing-sm);
+    }
+    
+    .wedding-header {
+        padding: var(--spacing-md);
+    }
+    
+    .header-content {
+        gap: var(--spacing-sm);
+    }
+    
+    .header-icon {
+        font-size: 2rem;
+    }
+    
+    .header-title {
+        font-size: 1.3rem;
+    }
+    
+    .slideshow-section,
+    .sidebar {
+        padding: var(--spacing-md);
+        border-radius: 4px;
+    }
+    
+    .slideshow-container {
+        aspect-ratio: 4 / 3;
+    }
+    
+    .control-group {
+        gap: var(--spacing-xs);
+    }
+    
+    .control-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .sidebar-section {
+        border-bottom: 1px solid var(--color-gold);
+        padding-bottom: var(--spacing-sm);
+    }
+    
+    .sidebar-section:last-child {
+        border-bottom: none;
+    }
+    
+    .song-list,
+    .video-list {
+        max-height: 150px;
+    }
+    
+    /* Welcome screen adjustments */
+    .welcome-title {
+        font-size: 1.8rem;
+    }
+    
+    .welcome-couple {
+        font-size: 1.1rem;
+    }
+    
+    .btn-start {
+        font-size: 1.2rem;
+        padding: 0.8rem 2rem;
+    }
+    
+    /* Video overlay on mobile */
+    .video-player-container {
+        width: 95%;
+    }
+    
+    .close-video-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
+/* Extra small mobile (up to 480px) */
+@media (max-width: 480px) {
+    html {
+        font-size: 13px;
+    }
+    
+    .slideshow-controls {
+        gap: var(--spacing-xs);
+    }
+    
+    .control-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .duration-select,
+    .custom-duration {
+        width: 100%;
+    }
+    
+    .control-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+        flex: 1;
+    }
+    
+    .song-controls,
+    .song-advanced-controls {
+        gap: var(--spacing-xs);
+    }
+    
+    .song-controls .control-btn,
+    .song-advanced-controls .control-btn {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .welcome-icon {
+        font-size: 3.5rem;
+    }
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Print Styles */
+@media print {
+    .slideshow-controls,
+    .sidebar,
+    .close-video-btn {
+        display: none;
+    }
+    
+    .slideshow-image {
+        page-break-inside: avoid;
+    }
+}

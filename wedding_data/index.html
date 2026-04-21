@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hindu Wedding Slideshow</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <section id="welcomeScreen" class="welcome-screen active" role="region" aria-label="Welcome Screen">
+        <div class="welcome-container">
+            <div class="welcome-icon">💍</div>
+            <h1 class="welcome-title">Celebrating Love and Tradition</h1>
+            <p class="welcome-couple">The Happy Couple</p>
+            <button id="startBtn" class="btn-start" aria-label="Start slideshow">Start</button>
+        </div>
+    </section>
+
+    <!-- Main Slideshow -->
+    <div id="slideshowContainer" class="slideshow-wrapper hidden">
+        <!-- Header -->
+        <header class="wedding-header">
+            <div class="header-content">
+                <span class="header-icon">💍</span>
+                <h1 class="header-title">The Happy Couple</h1>
+            </div>
+        </header>
+
+        <main class="slideshow-main">
+            <!-- Image Slideshow Section -->
+            <section id="imageSlideshowSection" class="slideshow-section" role="region" aria-label="Image Slideshow">
+                <div class="slideshow-container">
+                    <div class="image-wrapper">
+                        <img id="currentImage" src="" alt="Wedding slideshow image" class="slideshow-image">
+                        <div id="imageCaption" class="image-caption" aria-live="polite"></div>
+                    </div>
+                    <div class="image-counter" aria-live="polite">
+                        <span id="currentImageIndex">0</span> / <span id="totalImages">0</span>
+                    </div>
+                </div>
+
+                <!-- Slideshow Controls -->
+                <div class="slideshow-controls" role="toolbar" aria-label="Slideshow controls">
+                    <div class="control-group">
+                        <label for="durationSelect" class="control-label">Duration:</label>
+                        <select id="durationSelect" class="duration-select" aria-label="Image display duration">
+                            <option value="1000">1s</option>
+                            <option value="3000" selected>3s</option>
+                            <option value="5000">5s</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        <input id="customDuration" type="number" class="custom-duration hidden" min="1" max="60" placeholder="seconds" aria-label="Custom duration in seconds">
+                    </div>
+
+                    <div class="control-group">
+                        <button id="playPauseBtn" class="control-btn" aria-label="Play/Pause slideshow" aria-pressed="true">
+                            ▶ Play
+                        </button>
+                        <button id="prevBtn" class="control-btn" aria-label="Previous image">⬅ Prev</button>
+                        <button id="nextBtn" class="control-btn" aria-label="Next image">Next ➡</button>
+                        <button id="shuffleBtn" class="control-btn" aria-label="Shuffle slideshow" aria-pressed="false">🔀 Shuffle</button>
+                        <button id="loopBtn" class="control-btn" aria-label="Toggle loop mode" aria-pressed="true">🔁 Loop</button>
+                    </div>
+                </div>
+
+                <!-- No Images Message -->
+                <div id="noImagesMsg" class="message-box hidden" role="alert">
+                    No images found. Please add images to the <code>images/</code> folder.
+                </div>
+            </section>
+        </main>
+
+        <!-- Right Sidebar: Song Controls & Video Gallery -->
+        <aside class="sidebar" role="complementary">
+            <!-- Audio Player (hidden native element) -->
+            <audio id="audioPlayer"></audio>
+
+            <!-- Song Controls Section -->
+            <section id="songSection" class="sidebar-section" role="region" aria-label="Audio Player">
+                <h2 class="sidebar-title">🎵 Songs</h2>
+
+                <div class="song-info">
+                    <div id="currentSongTitle" class="song-title" aria-live="polite">No song playing</div>
+                    <div class="song-time">
+                        <span id="songCurrentTime">0:00</span> / <span id="songDuration">0:00</span>
+                    </div>
+                    <div class="song-progress-container">
+                        <input id="songProgressBar" type="range" class="song-progress" min="0" max="100" value="0" aria-label="Song progress">
+                    </div>
+                </div>
+
+                <div class="song-controls" role="toolbar" aria-label="Song controls">
+                    <button id="songPlayPauseBtn" class="control-btn small" aria-label="Play/Pause song" aria-pressed="false">▶ Play</button>
+                    <button id="songPrevBtn" class="control-btn small" aria-label="Previous song">⬅ Prev</button>
+                    <button id="songNextBtn" class="control-btn small" aria-label="Next song">Next ➡</button>
+                </div>
+
+                <div class="song-advanced-controls" role="toolbar" aria-label="Advanced song controls">
+                    <button id="songShuffleBtn" class="control-btn small" aria-label="Shuffle playlist" aria-pressed="false">🔀 Shuffle</button>
+                    <button id="repeatBtn" class="control-btn small" aria-label="Repeat mode" aria-pressed="false">🔂 All</button>
+                </div>
+
+                <div class="volume-control">
+                    <label for="volumeSlider" class="control-label">Volume:</label>
+                    <input id="volumeSlider" type="range" class="volume-slider" min="0" max="100" value="70" aria-label="Volume level">
+                    <button id="muteBtn" class="control-btn small" aria-label="Mute audio" aria-pressed="false">🔊 Mute</button>
+                </div>
+
+                <div id="noSongsMsg" class="message-box hidden" role="alert">
+                    No songs found. Add audio files to the <code>songs/</code> folder.
+                </div>
+
+                <!-- Song Playlist -->
+                <div id="songList" class="song-list" role="listbox" aria-label="Available songs">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Video Gallery Section -->
+            <section id="videoSection" class="sidebar-section" role="region" aria-label="Video Gallery">
+                <h2 class="sidebar-title">🎬 Videos</h2>
+
+                <div id="noVideosMsg" class="message-box hidden" role="alert">
+                    No videos found. Add video files to the <code>videos/</code> folder.
+                </div>
+
+                <div id="videoList" class="video-list" role="listbox" aria-label="Available videos">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <!-- Video Player Overlay -->
+    <div id="videoOverlay" class="video-overlay hidden" role="dialog" aria-label="Video Player">
+        <button id="closeVideoBtn" class="close-video-btn" aria-label="Close video player">✕</button>
+        <div class="video-player-container">
+            <video id="videoPlayer" class="video-player" controls aria-label="Video player">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator" role="status" aria-label="Loading media"></div>
+
+    <!-- Scripts -->
+    <script src="media-loader.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

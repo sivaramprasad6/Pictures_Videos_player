@@ -1,0 +1,15 @@
+{
+    "images": [
+        "sample-photo-1.jpg",
+        "sample-photo-2.jpg",
+        "sample-photo-3.jpg"
+    ],
+    "videos": [
+        "sample-video-1.mp4",
+        "sample-video-2.webm"
+    ],
+    "songs": [
+        "sample-song-1.mp3",
+        "sample-song-2.ogg"
+    ]
+}
